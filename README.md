@@ -19,9 +19,9 @@ R² = 0.8873 means that the model accounts for about **88.73% of the variation i
 
 The model's equation, expressed in the **original input units**, is approximately:
 
-\[
+$$
 \widehat{\mathrm{CO_2}} = 329.1364 + 17.8581\,\mathrm{ENGINESIZE} - 5.0150\,\mathrm{FUELCONSUMPTION\_COMB\_MPG}
-\]
+$$
 
 CO₂ emissions are in g/km, engine size is in litres, and combined fuel economy is in miles per gallon (MPG). These coefficients describe associations **conditional on the other included feature**, not causal effects. The intercept corresponds to zero engine size and zero MPG and has little practical interpretation.
 
@@ -67,7 +67,7 @@ AI-Engineering-workspace/
     └── README.md
 ```
 
-The directory above shows the intended repository layout. `requirements.txt`, `.gitignore`, and this README are the final repository-preparation files; create or copy them into the project if not already present. The `eda.py` function can be called separately from `main.py` when the correlation heatmap needs to be regenerated.
+The `eda.py` function can be called separately from `main.py` when the correlation heatmap needs to be regenerated.
 
 ## How the project works
 
@@ -107,10 +107,10 @@ The directory above shows the intended repository layout. `requirements.txt`, `.
 
 **How Pearson correlation works:** For two numeric variables, X and Y,
 
-\[
+$$
 r_{XY}=\frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}
 {\sqrt{\sum_{i=1}^{n}(x_i-\bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar{y})^2}}
-\]
+$$
 
 The numerator measures whether X and Y vary together; the denominator scales the result to the interval −1 to +1. Values near +1 indicate a strong positive *linear* relationship, values near −1 a strong negative one, and values near 0 little linear association. **Correlation does not establish causation.**
 
@@ -139,11 +139,11 @@ The numerator measures whether X and Y vary together; the denominator scales the
 
 **Mathematics of standardization:**
 
-\[
+$$
 z_j=\frac{x_j-\mu_j}{\sigma_j}
-\]
+$$
 
-Here, \(\mu_j\) and \(\sigma_j\) are the **training-set** mean and standard deviation of feature j. Scikit-learn's `StandardScaler` uses the population-standard-deviation convention (`ddof=0`).
+Here, $\mu_j$ and $\sigma_j$ are the **training-set** mean and standard deviation of feature j. Scikit-learn's `StandardScaler` uses the population-standard-deviation convention (`ddof=0`).
 
 **The three methods:**
 
@@ -170,15 +170,15 @@ X_test_scaled = scaler.transform(X_test)
 
 **Model:**
 
-\[
+$$
 \hat y_i=b+w_1z_{i1}+w_2z_{i2}
-\]
+$$
 
 The weights are selected by **ordinary least squares (OLS)**, which minimizes the sum of squared residuals:
 
-\[
+$$
 \min_{b,w_1,w_2}\sum_{i=1}^{n}(y_i-\hat y_i)^2
-\]
+$$
 
 A residual is the actual value minus its prediction. Squaring prevents positive and negative residuals from cancelling and penalizes larger errors more heavily.
 
@@ -192,15 +192,15 @@ A residual is the actual value minus its prediction. Squaring prevents positive 
 
 The intercept is the predicted CO₂ emissions when both standardized inputs are zero—equivalently, when both raw features equal their training-set means. Each standardized coefficient describes the predicted change in emissions associated with a one-training-standard-deviation increase in that feature, **holding the other feature constant**.
 
-**Converting coefficients to original units:** Since \(z_j=(x_j-\mu_j)/\sigma_j\), substitute this expression into the model and collect terms:
+**Converting coefficients to original units:** Since $z_j=(x_j-\mu_j)/\sigma_j$, substitute this expression into the model and collect terms:
 
-\[
+$$
 w_j^{\mathrm{original}}=\frac{w_j^{\mathrm{standardized}}}{\sigma_j}
-\]
+$$
 
-\[
+$$
 b^{\mathrm{original}}=b^{\mathrm{standardized}}-\sum_jw_j^{\mathrm{original}}\mu_j
-\]
+$$
 
 In Python:
 
@@ -217,37 +217,37 @@ This produced engine size = **+17.8581 g/km per litre**, MPG = **−5.0150 g/km 
 
 **Why:** Training a model is not enough: test-set metrics quantify prediction error and how much variation the model explains on unseen observations.
 
-Let \(y_i\) be actual emissions, \(\hat y_i\) predicted emissions, \(\bar y\) the mean actual test emission, and n the number of test vehicles.
+Let $y_i$ be actual emissions, $\hat y_i$ predicted emissions, $\bar y$ the mean actual test emission, and n the number of test vehicles.
 
 **Mean absolute error (MAE)**
 
-\[
+$$
 \mathrm{MAE}=\frac{1}{n}\sum_i|y_i-\hat y_i|
-\]
+$$
 
 The average absolute prediction error, in **g/km**. Here, **14.29 g/km**. Every absolute error contributes proportionally.
 
 **Mean squared error (MSE)**
 
-\[
+$$
 \mathrm{MSE}=\frac{1}{n}\sum_i(y_i-\hat y_i)^2
-\]
+$$
 
 The average squared prediction error, in **(g/km)²**. Here, **466.11**. Large errors receive more weight because they are squared.
 
 **Root mean squared error (RMSE)**
 
-\[
+$$
 \mathrm{RMSE}=\sqrt{\mathrm{MSE}}
-\]
+$$
 
 Returns the squared-error measure to the target's original unit, **g/km**. Here, **21.59 g/km**. The implementation uses `np.sqrt(mse)` for compatibility across scikit-learn versions.
 
 **Coefficient of determination (R²)**
 
-\[
+$$
 R^2=1-\frac{\sum_i(y_i-\hat y_i)^2}{\sum_i(y_i-\bar y)^2}
-\]
+$$
 
 Compares the model's squared error with the error from always predicting the mean of the actual test targets. Here, **0.8873**. A score of 1 is perfect; 0 matches that mean baseline; negative scores are possible when predictions perform worse than it.
 
