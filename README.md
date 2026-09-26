@@ -20,7 +20,9 @@ R² = 0.8873 means that the model accounts for about **88.73% of the variation i
 The model's equation, expressed in the **original input units**, is approximately:
 
 $$
-\widehat{\mathrm{CO_2}} = 329.1364 + 17.8581\,\mathrm{ENGINESIZE} - 5.0150\,\mathrm{FUELCONSUMPTION\_COMB\_MPG}
+\widehat{\mathrm{CO}_{2}} = 329.1364
++ 17.8581\,\mathrm{ENGINESIZE}
+- 5.0150\,\mathrm{MPG}
 $$
 
 CO₂ emissions are in g/km, engine size is in litres, and combined fuel economy is in miles per gallon (MPG). These coefficients describe associations **conditional on the other included feature**, not causal effects. The intercept corresponds to zero engine size and zero MPG and has little practical interpretation.
